@@ -26,6 +26,7 @@ import { colorScheme } from '../../../setup/theme/constants';
 import { ColorModeSwitcher } from '../../../setup/AppRouter/components/ExternalRoute/ColorModeSwitcher';
 import { Link as RouterLink } from 'react-router-dom';
 import { FaLeaf } from 'react-icons/fa';
+import SearchRestaurants from '../SearchRestaurants';
 const TopNavigation = () => {
   const { isOpen, onToggle } = useDisclosure();
 
@@ -77,6 +78,9 @@ const TopNavigation = () => {
             <DesktopNav />
           </Flex>
         </Flex>
+        <Box w="50%">
+          <SearchRestaurants />
+        </Box>
         {/* Color mode, sign up, sign in */}
         <Stack
           flex={{ base: 1, md: 0 }}

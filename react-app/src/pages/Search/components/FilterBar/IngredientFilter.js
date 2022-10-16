@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import useConstrastColor from '../../../../common/hooks/useConstrastColor';
 import useGlobalAlert from '../../../../common/hooks/useGlobalAlert';
 import useSearchSlice from '../../../../common/hooks/useSearchSlice';
 
@@ -17,7 +18,7 @@ const IngredientFilter = () => {
   const { globalAlert } = useGlobalAlert();
   const [allergen, setAllergen] = useState('');
   const { search, addAllergenSearch } = useSearchSlice();
-  const bgInput = useColorModeValue('gray.200', 'gray.700');
+  const { constrast } = useConstrastColor();
 
   const handleChange = event => {
     setAllergen(event.target.value);
@@ -52,7 +53,7 @@ const IngredientFilter = () => {
             onChange={handleChange}
             value={allergen}
             variant="filled"
-            backgroundColor={bgInput}
+            backgroundColor={constrast}
           />
         </InputGroup>
       </FormControl>

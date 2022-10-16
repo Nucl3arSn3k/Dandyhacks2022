@@ -8,6 +8,7 @@ import {
   Wrap,
 } from '@chakra-ui/react';
 import React from 'react';
+import useBGColor from '../../../../common/hooks/useBGFont';
 import useBrandColor from '../../../../common/hooks/useBrandColor';
 import useOffGrayColor from '../../../../common/hooks/useOffGrayColor';
 import useSearchSlice from '../../../../common/hooks/useSearchSlice';
@@ -16,6 +17,7 @@ const CurrentFilter = () => {
   const { search, removeAllergenSearch } = useSearchSlice();
   const { offGray } = useOffGrayColor();
   const { brandColor } = useBrandColor();
+  const { bgFont } = useBGColor();
 
   const handleRemoveAllergen = allergen => {
     removeAllergenSearch(allergen);
@@ -38,8 +40,9 @@ const CurrentFilter = () => {
             backgroundColor={brandColor}
             borderRadius="full"
           >
-            <TagLabel>{allergen}</TagLabel>
+            <TagLabel color={bgFont}>{allergen}</TagLabel>
             <TagCloseButton
+              color={bgFont}
               onClick={() => {
                 handleRemoveAllergen(allergen);
               }}
