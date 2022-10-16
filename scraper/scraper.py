@@ -1,4 +1,3 @@
-from dataclasses import replace
 import difflib
 import requests
 from bs4 import BeautifulSoup
@@ -9,7 +8,7 @@ from firebase_admin import credentials, firestore
 
 
 def menuscrape():
-    url = "https://menupages.com/desiatos-deli/1475-e-henrietta-rd-rochester"
+    url = "https://menupages.com/2-ton-tonys-pizza/545-titus-ave-rochester"
 
     # food api details
     # application key
@@ -32,18 +31,17 @@ def menuscrape():
     job7 = soup.find_all("span", class_="menu-item__price")  # fetches menu item price
     job8 = soup.find_all("div", class_="header__logo")  # fetches the image
 
-    resturant_name_raw = str(job0)
-    resturant_adress_raw = str(job1)
+    resturant_name_raw = str(job0[0])
+    resturant_adress_raw = str(job1[0])
     resturant_phone_raw = str(job2[0])
-    resturant_cuisines_raw = str(job3)
+    resturant_cuisines_raw = str(job3[0])
     resturant_name = BeautifulSoup(resturant_name_raw, "lxml").text
     resturant_adress = BeautifulSoup(resturant_adress_raw, "lxml").text
     resturant_phone = BeautifulSoup(resturant_phone_raw, "lxml").text
     resturant_cuisines = BeautifulSoup(resturant_cuisines_raw, "lxml").text
 
     res_logo = str(job8)
-    res_logo = res_logo.split()
-    res_logo = res_logo[5][5:-2]
+    print(res_logo)
 
     list0 = []
     list1 = []
@@ -52,7 +50,7 @@ def menuscrape():
         strx_clean = BeautifulSoup(strx, "lxml").text
         # print(strx)
         # f.close()'
-        list0.append(strx_clean)
+        list0.append(strx_clean.lower())
 
     for x in job6:
         strx = str(x)
@@ -95,7 +93,7 @@ def menuscrape():
         else:
             # print("Match found")
             comparisonlist.append(ingredient_dict["parsed"][0]["food"]["label"])
-            adresslist.append([["parsed"], [-1], ["food"], ["label"]])
+            adresslist.append([["parsed"], [0], ["food"], ["label"]])
 
         i = 0
         for x in ingredient_dict["hints"]:
@@ -141,12 +139,10 @@ def menuscrape():
                 x = ingredient_dict["hints"][xiv]["food"]["foodContentsLabel"]
                 pot_matches.append(x)
                 break
-        # This chunk of code should strip quotes
-        mymap = map(lambda each: each.strip('"'), pot_matches)
-        mylist = list(mymap)
-        print(mylist)
-        print(pot_matches)
-        finalingredients.append(mylist)
+        if pot_matches[0] == "we are working on getting the ingredients for this item":
+            finalingredients.append([])
+        else:
+            finalingredients.append(pot_matches)
 
     # print(len(list0))
     # print(len(finalingredients))
@@ -155,28 +151,36 @@ def menuscrape():
     zipped_list = list(zipped)
 
     restaurant_menu = []
-
     # Creating an array of menu objects
     for index in range(len(list0)):
         obj = {
-            "name": list0[index],
+            "name": list0[index].lower(),
             "price": list1[index],
-            "ingredients": finalingredients[index],
+            "ingredients": str(finalingredients[index])
+            .replace("[", "")
+            .replace("]", "")
+            .replace(",", "")
+            .replace("'", "")
+            .lower()
+            .split("; "),
         }
         restaurant_menu.append(obj)
 
     dictionary = {
-        "restaurant_name": resturant_name.replace("[", "").replace("]", ""),
-        "restaurant_address": resturant_adress.replace("[", "").replace("]", ""),
-        "restaurant_phone": resturant_phone.replace("[", "").replace("]", ""),
+        "restaurant_name": resturant_name.replace("[", "")
+        .replace("]", "")
+        .replace("\n", "")
+        .lower(),
+        "restaurant_address": resturant_adress.replace("[", "")
+        .replace("]", "")
+        .replace("\n", ""),
+        "restaurant_phone": resturant_phone.replace("[", "")
+        .replace("]", "")
+        .replace("\n", ""),
         "restaurant_cuisine": resturant_cuisines.replace("[", "")
         .replace("]", "")
-        .replace("Dinner", "")
-        .replace("Lunch", "")
-        .replace("Breakfast", "")
-        .replace("breakfast", "")
-        .replace("lunch", "")
-        .replace("dinner", ""),
+        .replace("\n", "")
+        .lower(),
         "restaurant_image": res_logo,
         "restaurant_menu": restaurant_menu,
     }
@@ -195,7 +199,6 @@ def keys_exists(element, *keys):
         raise AttributeError("keys_exists() expects dict as first argument.")
     if len(keys) == 0:
         raise AttributeError("keys_exists() expects at least two arguments, one given.")
-
     _element = element
     for key in keys:
         try:
