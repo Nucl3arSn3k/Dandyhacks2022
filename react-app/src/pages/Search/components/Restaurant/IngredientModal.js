@@ -18,6 +18,7 @@ import useSearchSlice from '../../../../common/hooks/useSearchSlice';
 import useBrandColor from '../../../../common/hooks/useBrandColor';
 import useBGColor from '../../../../common/hooks/useBGFont';
 import useOffGrayColor from '../../../../common/hooks/useOffGrayColor';
+import { titleCase } from '../../../../common/utils/utils';
 const IngredientModal = ({ isOpen, onClose, name, ingredients }) => {
   const { search } = useSearchSlice();
   const { brandColor } = useBrandColor();
@@ -29,7 +30,7 @@ const IngredientModal = ({ isOpen, onClose, name, ingredients }) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {name} ingredients
+          {titleCase(name)} ingredients
           <Text fontSize="sm" py={3} color={offColor}>
             Potential allergens are{' '}
             <Text
@@ -47,18 +48,20 @@ const IngredientModal = ({ isOpen, onClose, name, ingredients }) => {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Highlight
-            query={search?.allergens}
-            styles={{
-              px: '2',
-              py: '1',
-              rounded: 'full',
-              bg: brandColor,
-              color: bgFont,
-            }}
-          >
-            {ingredients.join(', ')}
-          </Highlight>
+          <Box maxH={300} overflowY="auto">
+            <Highlight
+              query={search?.allergens}
+              styles={{
+                px: '2',
+                py: '1',
+                rounded: 'full',
+                bg: brandColor,
+                color: bgFont,
+              }}
+            >
+              {ingredients.join(', ')}
+            </Highlight>
+          </Box>
         </ModalBody>
         <ModalFooter>
           <Button mr={3} onClick={onClose}>

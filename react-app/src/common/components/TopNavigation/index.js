@@ -78,9 +78,6 @@ const TopNavigation = () => {
             <DesktopNav />
           </Flex>
         </Flex>
-        <Box w="50%">
-          <SearchRestaurants />
-        </Box>
         {/* Color mode, sign up, sign in */}
         <Stack
           flex={{ base: 1, md: 0 }}
@@ -89,24 +86,6 @@ const TopNavigation = () => {
           spacing={6}
         >
           <ColorModeSwitcher />
-          <Button
-            as={'a'}
-            fontSize={'sm'}
-            fontWeight={400}
-            variant={'link'}
-            href={'#'}
-          >
-            Sign In
-          </Button>
-          <Button
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            colorScheme={colorScheme}
-            fontWeight={600}
-            href={'#'}
-          >
-            Sign Up
-          </Button>
         </Stack>
       </Flex>
 
@@ -273,28 +252,4 @@ const MobileNavItem = ({ label, children, href }) => {
   );
 };
 
-const NAV_ITEMS = [
-  {
-    label: 'Home',
-    href: '/',
-  },
-  {
-    label: 'Search',
-    href: '/search',
-  },
-  {
-    label: 'Learn',
-    children: [
-      {
-        label: 'Explore Design Work',
-        subLabel: 'Trending Design to inspire you',
-        href: '#',
-      },
-      {
-        label: 'New & Noteworthy',
-        subLabel: 'Up-and-coming Designers',
-        href: '#',
-      },
-    ],
-  },
-];
+const NAV_ITEMS = [];

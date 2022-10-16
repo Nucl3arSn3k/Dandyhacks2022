@@ -4,6 +4,7 @@ import {
   HStack,
   Icon,
   Image,
+  Text,
   useColorMode,
   useColorModeValue,
   VStack,
@@ -16,6 +17,7 @@ import { FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import useSearchSlice from '../../../../common/hooks/useSearchSlice';
 import StarRating from '../StarRating';
+import { titleCase } from '../../../../common/utils/utils';
 
 const RestCard = ({ name, img, address, cuisine, rating, id }) => {
   const { offGray } = useOffGrayColor();
@@ -27,7 +29,8 @@ const RestCard = ({ name, img, address, cuisine, rating, id }) => {
   return (
     <VStack
       w={300}
-      h={200}
+      h={300}
+      wrap="wrap"
       p={2}
       align="flex-start"
       _hover={{
@@ -64,15 +67,15 @@ const RestCard = ({ name, img, address, cuisine, rating, id }) => {
         {name}
       </Heading>
       {/* Address, cuisine */}
-      <HStack pos="relative" color={offGray}>
-        <Box>{address}</Box>
-        <Box pos="relative" bottom={1}>
-          <Icon fontSize="3px" as={FaCircle} />
-        </Box>
-        <Box>{cuisine}</Box>
-      </HStack>
-      {/* Rating */}
-      <StarRating rating={rating} />
+      <VStack
+        color={offGray}
+        flexWrap="wrap"
+        justify="flex-start"
+        align="flex-start"
+      >
+        <Text fontSize="xs">{address}</Text>
+        <Text fontSize="xs">{cuisine}</Text>
+      </VStack>
     </VStack>
   );
 };

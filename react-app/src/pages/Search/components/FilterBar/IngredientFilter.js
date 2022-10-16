@@ -5,7 +5,6 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';

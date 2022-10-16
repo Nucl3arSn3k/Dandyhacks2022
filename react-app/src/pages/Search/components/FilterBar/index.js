@@ -5,6 +5,8 @@ import IngredientFilter from './IngredientFilter';
 import useBackgroundColor from '../../../../common/hooks/useBackgroundColor';
 
 const FilterBar = () => {
+  const { bg } = useBackgroundColor();
+
   return (
     <Box w="300px" minHeight="100vh" p={5} pos={'fixed'}>
       <Heading size="lg" mb={5}>

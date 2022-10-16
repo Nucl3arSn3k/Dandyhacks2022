@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import {
   addRestaurant,
+  clearRestaurants,
   removeRestaurant,
 } from '../../../store/features/restaurantSlice';
 
@@ -9,11 +10,22 @@ const useRestaurantSlice = () => {
   const dispatch = useDispatch();
 
   const addRestaurantSearch = res => {
-    dispatch(addRestaurant(res.toLowerCase()));
+    if (restaurant.restaurants.length > 0) {
+      if (
+        restaurant.restaurants.filter(res2 => res2.id === res.id).length > 0
+      ) {
+        return;
+      }
+    }
+    dispatch(addRestaurant(res));
   };
 
   const removeRestaurantSearch = res => {
-    dispatch(removeRestaurant(res.toLowerCase()));
+    dispatch(removeRestaurant(res));
+  };
+
+  const clearRestaurantsSearch = res => {
+    dispatch(clearRestaurants(res));
   };
 
   const getRestaurant = id => {
@@ -38,6 +50,7 @@ const useRestaurantSlice = () => {
     removeRestaurantSearch,
     getRestaurant,
     getRestaurantMenu,
+    clearRestaurantsSearch,
   };
 };
 
