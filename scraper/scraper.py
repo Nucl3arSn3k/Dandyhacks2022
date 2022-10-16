@@ -1,3 +1,4 @@
+from dataclasses import replace
 import difflib
 import requests
 from bs4 import BeautifulSoup
@@ -5,7 +6,6 @@ from bs4 import BeautifulSoup
 # firebase
 import firebase_admin
 from firebase_admin import credentials, firestore
-
 
 
 def menuscrape():
@@ -91,9 +91,9 @@ def menuscrape():
         # print(ingredient_dict.keys())
 
         if len(ingredient_dict["parsed"]) == 0:
-           print("No perfect match")
+            print("No perfect match")
         else:
-            #print("Match found")
+            # print("Match found")
             comparisonlist.append(ingredient_dict["parsed"][0]["food"]["label"])
             adresslist.append([["parsed"], [-1], ["food"], ["label"]])
 
@@ -115,8 +115,8 @@ def menuscrape():
         # print(comparisonlist)
         local = ingredient_dict["text"]
         match = difflib.get_close_matches(local, comparisonlist)
-        #print("Inital search input was: " + y)
-        #print(match)
+        # print("Inital search input was: " + y)
+        # print(match)
         # print(matchv2)
         errorstate = []
         inttrack = 0
@@ -125,7 +125,7 @@ def menuscrape():
         pot_matches = []
         for x in range(len(match)):
             pot_matches = []
-            #print(inttrack)
+            # print(inttrack)
             index = comparisonlist.index(match[inttrack])
             # print(comparisonlist)
             # print(index)
@@ -136,16 +136,21 @@ def menuscrape():
             # print(inttrack)
 
             if keys_exists(ingredient_dict, "hints", xiv, "food", "foodContentsLabel"):
-                #print("yay")
-                #print(ingredient_dict["hints"][xiv]["food"]["foodContentsLabel"])
+                # print("yay")
+                # print(ingredient_dict["hints"][xiv]["food"]["foodContentsLabel"])
                 x = ingredient_dict["hints"][xiv]["food"]["foodContentsLabel"]
                 pot_matches.append(x)
                 break
-        finalingredients.append(pot_matches)
+        # This chunk of code should strip quotes
+        mymap = map(lambda each: each.strip('"'), pot_matches)
+        mylist = list(mymap)
+        print(mylist)
+        print(pot_matches)
+        finalingredients.append(mylist)
 
-    #print(len(list0))
-    #print(len(finalingredients))
-    #print(finalingredients[0])
+    # print(len(list0))
+    # print(len(finalingredients))
+    # print(finalingredients[0])
     zipped = zip(finalingredients, list0, list1)
     zipped_list = list(zipped)
 
@@ -154,17 +159,24 @@ def menuscrape():
     # Creating an array of menu objects
     for index in range(len(list0)):
         obj = {
-            'name': list0[index],
-            'price': list1[index],
-            'ingredients': finalingredients[index],
+            "name": list0[index],
+            "price": list1[index],
+            "ingredients": finalingredients[index],
         }
         restaurant_menu.append(obj)
 
     dictionary = {
-        "restaurant_name": resturant_name.replace('[', '').replace(']', ''),
-        "restaurant_address": resturant_adress.replace('[', '').replace(']', ''),
-        "restaurant_phone": resturant_phone.replace('[', '').replace(']', ''),
-        "restaurant_cuisine": resturant_cuisines.replace('[', '').replace(']', ''),
+        "restaurant_name": resturant_name.replace("[", "").replace("]", ""),
+        "restaurant_address": resturant_adress.replace("[", "").replace("]", ""),
+        "restaurant_phone": resturant_phone.replace("[", "").replace("]", ""),
+        "restaurant_cuisine": resturant_cuisines.replace("[", "")
+        .replace("]", "")
+        .replace("Dinner", "")
+        .replace("Lunch", "")
+        .replace("Breakfast", "")
+        .replace("breakfast", "")
+        .replace("lunch", "")
+        .replace("dinner", ""),
         "restaurant_image": res_logo,
         "restaurant_menu": restaurant_menu,
     }
@@ -195,7 +207,7 @@ def keys_exists(element, *keys):
 
 def main():
     dict = menuscrape()
-    
+
     # initialize sdk
     cred = credentials.Certificate("secret key.json")
     firebase_admin.initialize_app(cred)
@@ -203,33 +215,28 @@ def main():
     # initialize firestore instance
     firestore_db = firestore.client()
 
-    # add data 
-    response = firestore_db.collection(u'restaurants_info').add({
-        "restaurant_name": dict["restaurant_name"],
-        "restaurant_address": dict["restaurant_address"],
-        "restaurant_phone": dict["restaurant_phone"],
-        "restaurant_image": dict["restaurant_image"],
-        "restaurant_cuisine": dict["restaurant_cuisine"],
-        })
+    # add data
+    response = firestore_db.collection("restaurants_info").add(
+        {
+            "restaurant_name": dict["restaurant_name"],
+            "restaurant_address": dict["restaurant_address"],
+            "restaurant_phone": dict["restaurant_phone"],
+            "restaurant_image": dict["restaurant_image"],
+            "restaurant_cuisine": dict["restaurant_cuisine"],
+        }
+    )
 
     id = response[1].id
     dict["id"] = id
 
-    # add data 
-    firestore_db.collection(u'restaurants_menu').add(dict)
-
-    
-    
-
-
-
-
+    # add data
+    firestore_db.collection("restaurants_menu").add(dict)
 
     # read data
-    snapshots = list(firestore_db.collection(u'restaurants').get())
+    snapshots = list(firestore_db.collection("restaurants").get())
     for snapshot in snapshots:
         print(snapshot.to_dict())
-    
-   
+
+
 if __name__ == "__main__":
     main()
