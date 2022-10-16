@@ -142,7 +142,9 @@ def menuscrape():
         if pot_matches[0] == "we are working on getting the ingredients for this item":
             finalingredients.append([])
         else:
-            finalingredients.append(pot_matches)
+            mymap = map(lambda each: each.strip('"'), pot_matches)
+            mylist = list(mymap)
+            finalingredients.append(mylist)
 
     # print(len(list0))
     # print(len(finalingredients))
@@ -180,7 +182,13 @@ def menuscrape():
         "restaurant_cuisine": resturant_cuisines.replace("[", "")
         .replace("]", "")
         .replace("\n", "")
-        .lower(),
+        .lower()
+        .replace("Dinner", "")
+        .replace("Lunch", "")
+        .replace("Breakfast", "")
+        .replace("dinner", "")
+        .replace("lunch", "")
+        .replace("breakfast", ""),
         "restaurant_image": res_logo,
         "restaurant_menu": restaurant_menu,
     }
